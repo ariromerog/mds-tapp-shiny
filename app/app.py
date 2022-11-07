@@ -3,6 +3,7 @@ from shiny import App, render, ui
 import pandas as pd
 import seaborn as sns
 
+sns.set_theme()
 # TODO - Refactor: separar datos, ui y server en packages
 
 rankings_df = pd.read_excel("./data/Rankings.xlsx").dropna()
