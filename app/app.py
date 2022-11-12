@@ -6,7 +6,9 @@ import seaborn as sns
 sns.set_theme()
 # TODO - Refactor: separar datos, ui y server en packages
 
-rankings_df = pd.read_excel("./data/Rankings.xlsx").dropna()
+rankings_df = pd.read_excel("./data/Rankings.xlsx")
+
+# Opciones 
 opts_rankings = rankings_df["Ranking"].unique().tolist()
 opts_years = rankings_df["Año"].unique().tolist()
 opts_instituciones = rankings_df["Institucion"].unique().tolist()
@@ -14,48 +16,51 @@ opts_area = rankings_df["Area"].unique().tolist()
 opts_subarea = ()
 opts_indicador = rankings_df["Indicador"].unique().tolist()
 
+# -----------------------------------------------------------------------------
+# Interfaz Gráfica
+# -----------------------------------------------------------------------------
+
 app_ui = ui.page_fluid(
     ui.div(
-    children=[
         ui.h1("Tarea 1 - Taller de Aplicaciones 2"),
         ui.p("Integrantes: Ari Romero Garrido - Karen Romero Garrido"),
-    ]),
+    ),
     ui.row(
-        ui.column(2, children=[
+        ui.column(2, 
             ui.input_selectize(
                 "rankings",
                 "Rankings",
                 opts_rankings,
                 multiple=True
             ),
-        ]),
-        ui.column(2, children=[
+        ),
+        ui.column(2,
             ui.input_selectize(
                 "instituciones",
                 "Instituciones",
                 opts_instituciones,
                 multiple=True
             ),
-        ]),
-        ui.column(2, children=[
+        ),
+        ui.column(2, 
             ui.input_selectize(
                 "area",
                 "Área",
                 opts_area,
                 multiple=True
             ),
-        ]),
-        ui.column(2, children=[
+        ),
+        ui.column(2,
             ui.output_ui("select_subarea"),
-        ]),
-        ui.column(2, children=[
+        ),
+        ui.column(2,
             ui.input_selectize(
                 "indicador",
                 "Indicador",
                 opts_indicador,
                 multiple=True
             ),
-        ]),
+        ),
     ),
     ui.hr(),
     ui.navset_tab(
