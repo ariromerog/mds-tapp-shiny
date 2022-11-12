@@ -68,7 +68,7 @@ app_ui = ui.page_fluid(
             ui.hr(),
             ui.output_table("df")
         ),
-        ui.nav("Ranking por Area", 
+        ui.nav("Ranking por Institución", 
             ui.h3("Ranking 1"),
             ui.output_plot("ranking1_plot"),
             ui.h3("Ranking 2"),
@@ -76,8 +76,9 @@ app_ui = ui.page_fluid(
             ui.h3("Ranking 3"),
             ui.output_plot("ranking3_plot"),
         ),
-        ui.nav("Ranking por Indicador", 
-            "Contenido 1"
+        ui.nav("Puntaje Por Institución", 
+            ui.h3("Puntaje Global"),
+            ui.output_plot("puntaje_institucion"),
         ),
     )
 )
@@ -159,5 +160,17 @@ def server(input, output, session):
             hue="Area", style="Area" 
         )
 
+    @output
+    @render.plot(alt="Puntaje Institución")
+    def puntaje_institucion():
+        group_df = rankings_df.groupby(
+            ["Año", "Institucion","Indicador" ]
+        )["Valor indicador (numerico)"].mean().to_frame(name = "Valor").reset_index()
+        group_df.sort_values(by=["Valor"], inplace=True)
+        group_df['Institucion'] = group_df['Institucion'].str.replace('Universidad ', 'U')
+        return sns.boxplot(
+            data=group_df,
+            x="Institucion", y="Valor"
+        )
 
 app = App(app_ui, server)
