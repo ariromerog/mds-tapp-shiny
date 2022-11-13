@@ -7,6 +7,20 @@ sns.set_theme()
 # TODO - Refactor: separar datos, ui y server en packages
 
 rankings_df = pd.read_excel("./data/Rankings.xlsx")
+rankings_df['Institucion'] = rankings_df['Institucion'].str.replace('Universidad 2', '02')
+rankings_df['Institucion'] = rankings_df['Institucion'].str.replace('Universidad 3', '03')
+rankings_df['Institucion'] = rankings_df['Institucion'].str.replace('Universidad 4', '04')
+rankings_df['Institucion'] = rankings_df['Institucion'].str.replace('Universidad 5', '05')
+rankings_df['Institucion'] = rankings_df['Institucion'].str.replace('Universidad 6', '06')
+rankings_df['Institucion'] = rankings_df['Institucion'].str.replace('Universidad 7 ', '07') # 
+rankings_df['Institucion'] = rankings_df['Institucion'].str.replace('Universidad 7', '07')
+rankings_df['Institucion'] = rankings_df['Institucion'].str.replace('Universidad 8', '08')
+rankings_df['Institucion'] = rankings_df['Institucion'].str.replace('Universidad 9 ', '09') # 
+rankings_df['Institucion'] = rankings_df['Institucion'].str.replace('Universidad 9', '09')
+rankings_df['Institucion'] = rankings_df['Institucion'].str.replace('Universidad 10', '10')
+rankings_df['Institucion'] = rankings_df['Institucion'].str.replace('Universidad 11', '11')
+rankings_df['Institucion'] = rankings_df['Institucion'].str.replace('Universidad 12', '12')
+rankings_df['Institucion'] = rankings_df['Institucion'].str.replace('Universidad 1', '01')
 
 # Opciones 
 opts_rankings = rankings_df["Ranking"].unique().tolist()
@@ -16,6 +30,7 @@ opts_area = rankings_df["Area"].unique().tolist()
 opts_subarea = ()
 opts_indicador = rankings_df["Indicador"].unique().tolist()
 
+print(opts_instituciones)
 # -----------------------------------------------------------------------------
 # Interfaz Gráfica
 # -----------------------------------------------------------------------------
@@ -77,8 +92,6 @@ app_ui = ui.page_fluid(
             ui.output_plot("ranking3_plot"),
         ),
         ui.nav("Puntaje Por Institución", 
-            ui.h3("Puntaje Global"),
-            ui.output_plot("puntaje_plot"),
             ui.h3("Ranking 1"),
             ui.output_plot("puntaje1_plot"),
             ui.h3("Ranking 2"),
@@ -123,7 +136,6 @@ def server(input, output, session):
     def ranking1_plot():
         indx_ranking = rankings_df["Ranking"].isin(("Ranking 1",))
         sub_df = rankings_df[indx_ranking]
-        sub_df['Institucion'] = sub_df['Institucion'].str.replace('Universidad ', 'U')
         group_df = sub_df.groupby(
             ["Año", "Institucion", "Area" ]
         )["Ranking global"].mean().to_frame(name = "Ranking").reset_index()
@@ -139,7 +151,6 @@ def server(input, output, session):
     def ranking2_plot():
         indx_ranking = rankings_df["Ranking"].isin(("Ranking 2",))
         sub_df = rankings_df[indx_ranking]
-        sub_df['Institucion'] = sub_df['Institucion'].str.replace('Universidad ', 'U')
         group_df = sub_df.groupby(
             ["Año", "Institucion", "Area" ]
         )["Ranking global"].mean().to_frame(name = "Ranking").reset_index()
@@ -155,7 +166,6 @@ def server(input, output, session):
     def ranking3_plot():
         indx_ranking = rankings_df["Ranking"].isin(("Ranking 3",))
         sub_df = rankings_df[indx_ranking]
-        sub_df['Institucion'] = sub_df['Institucion'].str.replace('Universidad ', 'U')
         group_df = sub_df.groupby(
             ["Año", "Institucion", "Area" ]
         )["Ranking global"].mean().to_frame(name = "Ranking").reset_index()
@@ -168,19 +178,6 @@ def server(input, output, session):
 
     @output
     @render.plot(alt="Puntaje Institución")
-    def puntaje_plot():
-        group_df = rankings_df.groupby(
-            ["Año", "Institucion","Indicador" ]
-        )["Valor indicador (numerico)"].mean().to_frame(name = "Valor").reset_index()
-        group_df.sort_values(by=["Institucion"], inplace=True)
-        group_df['Institucion'] = group_df['Institucion'].str.replace('Universidad ', 'U')
-        return sns.boxplot(
-            data=group_df,
-            x="Institucion", y="Valor"
-        )
-
-    @output
-    @render.plot(alt="Puntaje Institución")
     def puntaje1_plot():
         indx_ranking = rankings_df["Ranking"].isin(("Ranking 1",))
         sub_df = rankings_df[indx_ranking]
@@ -188,7 +185,6 @@ def server(input, output, session):
             ["Año", "Institucion","Indicador" ]
         )["Valor indicador (numerico)"].mean().to_frame(name = "Valor").reset_index()
         group_df.sort_values(by=["Institucion"], inplace=True)
-        group_df['Institucion'] = group_df['Institucion'].str.replace('Universidad ', 'U')
         return sns.boxplot(
             data=group_df,
             x="Institucion", y="Valor"
@@ -203,7 +199,6 @@ def server(input, output, session):
             ["Año", "Institucion","Indicador" ]
         )["Valor indicador (numerico)"].mean().to_frame(name = "Valor").reset_index()
         group_df.sort_values(by=["Institucion"], inplace=True)
-        group_df['Institucion'] = group_df['Institucion'].str.replace('Universidad ', 'U')
         return sns.boxplot(
             data=group_df,
             x="Institucion", y="Valor"
@@ -218,7 +213,6 @@ def server(input, output, session):
             ["Año", "Institucion","Indicador" ]
         )["Valor indicador (numerico)"].mean().to_frame(name = "Valor").reset_index()
         group_df.sort_values(by=["Institucion"], inplace=True)
-        group_df['Institucion'] = group_df['Institucion'].str.replace('Universidad ', 'U')
         return sns.boxplot(
             data=group_df,
             x="Institucion", y="Valor"
