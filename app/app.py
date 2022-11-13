@@ -78,7 +78,13 @@ app_ui = ui.page_fluid(
         ),
         ui.nav("Puntaje Por Institución", 
             ui.h3("Puntaje Global"),
-            ui.output_plot("puntaje_institucion"),
+            ui.output_plot("puntaje_plot"),
+            ui.h3("Ranking 1"),
+            ui.output_plot("puntaje1_plot"),
+            ui.h3("Ranking 2"),
+            ui.output_plot("puntaje2_plot"),
+            ui.h3("Ranking 3"),
+            ui.output_plot("puntaje3_plot"),
         ),
     )
 )
@@ -162,15 +168,61 @@ def server(input, output, session):
 
     @output
     @render.plot(alt="Puntaje Institución")
-    def puntaje_institucion():
+    def puntaje_plot():
         group_df = rankings_df.groupby(
             ["Año", "Institucion","Indicador" ]
         )["Valor indicador (numerico)"].mean().to_frame(name = "Valor").reset_index()
-        group_df.sort_values(by=["Valor"], inplace=True)
+        group_df.sort_values(by=["Institucion"], inplace=True)
         group_df['Institucion'] = group_df['Institucion'].str.replace('Universidad ', 'U')
         return sns.boxplot(
             data=group_df,
             x="Institucion", y="Valor"
         )
+
+    @output
+    @render.plot(alt="Puntaje Institución")
+    def puntaje1_plot():
+        indx_ranking = rankings_df["Ranking"].isin(("Ranking 1",))
+        sub_df = rankings_df[indx_ranking]
+        group_df = sub_df.groupby(
+            ["Año", "Institucion","Indicador" ]
+        )["Valor indicador (numerico)"].mean().to_frame(name = "Valor").reset_index()
+        group_df.sort_values(by=["Institucion"], inplace=True)
+        group_df['Institucion'] = group_df['Institucion'].str.replace('Universidad ', 'U')
+        return sns.boxplot(
+            data=group_df,
+            x="Institucion", y="Valor"
+        )
+
+    @output
+    @render.plot(alt="Puntaje Institución")
+    def puntaje2_plot():
+        indx_ranking = rankings_df["Ranking"].isin(("Ranking 2",))
+        sub_df = rankings_df[indx_ranking]
+        group_df = sub_df.groupby(
+            ["Año", "Institucion","Indicador" ]
+        )["Valor indicador (numerico)"].mean().to_frame(name = "Valor").reset_index()
+        group_df.sort_values(by=["Institucion"], inplace=True)
+        group_df['Institucion'] = group_df['Institucion'].str.replace('Universidad ', 'U')
+        return sns.boxplot(
+            data=group_df,
+            x="Institucion", y="Valor"
+        )
+
+    @output
+    @render.plot(alt="Puntaje Institución")
+    def puntaje3_plot():
+        indx_ranking = rankings_df["Ranking"].isin(("Ranking 3",))
+        sub_df = rankings_df[indx_ranking]
+        group_df = sub_df.groupby(
+            ["Año", "Institucion","Indicador" ]
+        )["Valor indicador (numerico)"].mean().to_frame(name = "Valor").reset_index()
+        group_df.sort_values(by=["Institucion"], inplace=True)
+        group_df['Institucion'] = group_df['Institucion'].str.replace('Universidad ', 'U')
+        return sns.boxplot(
+            data=group_df,
+            x="Institucion", y="Valor"
+        )
+
 
 app = App(app_ui, server)
