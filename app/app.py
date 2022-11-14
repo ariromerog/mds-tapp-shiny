@@ -38,11 +38,12 @@ app_ui = ui.page_fluid(
     ui.div(
         ui.h1("Tarea 1 - Taller de Aplicaciones 2"),
         ui.p("Integrantes: Ari Romero Garrido - Karen Romero Garrido"),
-        ui.p("En este trabajo vamos a realizar un trabajo")
     ),
 
     ui.navset_tab(
         ui.nav("Explorar Datos", 
+            ui.p("Esta vista muestra los datos específicos que se muestran gráficamente en las demás pestañas."),
+            ui.hr(),
             ui.row(
                 ui.column(2, 
                     ui.input_selectize(
@@ -80,10 +81,11 @@ app_ui = ui.page_fluid(
                     ),
                 ),
             ),
-            ui.hr(),
             ui.output_table("df")
         ),
         ui.nav("Ranking por Institución", 
+            ui.p("Esta vista muestra un detalle del ránking por cada área especfica, separados por año."),
+            ui.hr(),
             ui.h3("Ranking 1"),
             ui.output_plot("ranking1_plot"),
             ui.h3("Ranking 2"),
@@ -92,6 +94,8 @@ app_ui = ui.page_fluid(
             ui.output_plot("ranking3_plot"),
         ),
         ui.nav("Puntaje Por Institución", 
+            ui.p("Esta vista muestra el comportamiento gneral de los puntajes de cada institución, separados por ránking."),
+            ui.hr(),
             ui.h3("Ranking 1"),
             ui.output_plot("puntaje1_plot"),
             ui.h3("Ranking 2"),
@@ -99,6 +103,16 @@ app_ui = ui.page_fluid(
             ui.h3("Ranking 3"),
             ui.output_plot("puntaje3_plot"),
         ),
+        ui.nav("Ranking por Año", 
+            ui.p("Esta vista muestra el comportamiento en el tiempo del ránking de las instituciones."),
+            ui.hr(),
+            ui.h3("Ranking 1"),
+            ui.output_plot("rankinganual1_plot"),
+            ui.h3("Ranking 2"),
+            ui.output_plot("rankinganual2_plot"),
+            ui.h3("Ranking 3"),
+            ui.output_plot("rankinganual3_plot"),
+        )
     )
 )
 
@@ -218,5 +232,49 @@ def server(input, output, session):
             x="Institucion", y="Valor"
         )
 
+    @output
+    @render.plot(alt="Ranking 1")
+    def rankinganual1_plot():
+        indx_ranking = rankings_df["Ranking"].isin(("Ranking 1",))
+        sub_df = rankings_df[indx_ranking]
+        group_df = sub_df.groupby(
+            ["Año", "Institucion" ]
+        )["Ranking global"].mean().to_frame(name = "Ranking").reset_index()
+        group_df.sort_values(by=["Institucion"], inplace=True)
+        return sns.lineplot(
+            data=group_df,
+            x="Año", y="Ranking",
+            hue="Institucion", style="Institucion"
+        )
+
+    @output
+    @render.plot(alt="Ranking 2")
+    def rankinganual2_plot():
+        indx_ranking = rankings_df["Ranking"].isin(("Ranking 2",))
+        sub_df = rankings_df[indx_ranking]
+        group_df = sub_df.groupby(
+            ["Año", "Institucion" ]
+        )["Ranking global"].mean().to_frame(name = "Ranking").reset_index()
+        group_df.sort_values(by=["Institucion"], inplace=True)
+        return sns.lineplot(
+            data=group_df,
+            x="Año", y="Ranking",
+            hue="Institucion", style="Institucion"
+        )
+
+    @output
+    @render.plot(alt="Ranking 3")
+    def rankinganual3_plot():
+        indx_ranking = rankings_df["Ranking"].isin(("Ranking 3",))
+        sub_df = rankings_df[indx_ranking]
+        group_df = sub_df.groupby(
+            ["Año", "Institucion" ]
+        )["Ranking global"].mean().to_frame(name = "Ranking").reset_index()
+        group_df.sort_values(by=["Institucion"], inplace=True)
+        return sns.lineplot(
+            data=group_df,
+            x="Año", y="Ranking",
+            hue="Institucion", style="Institucion"
+        )
 
 app = App(app_ui, server)
